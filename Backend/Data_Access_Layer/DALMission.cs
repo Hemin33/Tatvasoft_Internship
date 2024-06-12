@@ -1,10 +1,11 @@
+using Data_Access_Layer.Migrations;
 using Data_Access_Layer.Repository;
 using Data_Access_Layer.Repository.Entities;
 using Microsoft.EntityFrameworkCore;
 using System.Data;
 using System.Net;
 using System.Net.Mail;
-using static System.Runtime.InteropServices.JavaScript.JSType;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace Data_Access_Layer
 {
@@ -32,7 +33,8 @@ namespace Data_Access_Layer
 
         public List<Missions> MissionList()
         {
-            return _cIDbContext.Missions.Where(m => m.IsDeleted == false)
+            return _cIDbContext.Missions
+                .Where(mt => !mt.IsDeleted)
                 .ToList();
         }
 
@@ -58,9 +60,13 @@ namespace Data_Access_Layer
             mission.MissionType = "";
             mission.MissionVideoUrl = "";
             mission.ModifiedDate = DateTime.Now.ToUniversalTime();
-            mission.RegistrationDeadLine = mission.EndDate.AddDays(-1);
+
             try
             {
+                int mID = _cIDbContext.Missions.Max(u => u.Id) + 1;
+                mission.Id = mID;
+                mission.CreatedDate = DateTime.Now.ToUniversalTime();
+                mission.IsDeleted = false;
                 _cIDbContext.Missions.Add(mission);
                 _cIDbContext.SaveChanges();
                 result = "Mission added successfully.";
@@ -101,24 +107,22 @@ namespace Data_Access_Layer
                         // Update the mission details
                         missionToUpdate.MissionTitle = mission.MissionTitle;
                         missionToUpdate.MissionDescription = mission.MissionDescription;
-                        missionToUpdate.MissionOrganisationName = "";
-                        missionToUpdate.MissionOrganisationDetail = "";
+                        missionToUpdate.MissionOrganisationName = mission.MissionOrganisationName;
+                        missionToUpdate.MissionOrganisationDetail = mission.MissionOrganisationDetail;
                         missionToUpdate.CountryId = mission.CountryId;
                         missionToUpdate.CityId = mission.CityId;
-                        missionToUpdate.StartDate = mission.StartDate;
-                        missionToUpdate.EndDate = mission.EndDate;
-                        missionToUpdate.MissionType = "";
+                        missionToUpdate.StartDate = mission.StartDate.ToUniversalTime();
+                        missionToUpdate.EndDate = mission.EndDate.ToUniversalTime();
+                        missionToUpdate.MissionType = mission.MissionType;
                         missionToUpdate.TotalSheets = mission.TotalSheets;
                         missionToUpdate.RegistrationDeadLine = mission.RegistrationDeadLine;
                         missionToUpdate.MissionThemeId = mission.MissionThemeId;
                         missionToUpdate.MissionSkillId = mission.MissionSkillId;
                         missionToUpdate.MissionImages = mission.MissionImages;
-                        missionToUpdate.MissionDocuments = "";
-                        missionToUpdate.MissionAvilability = "";
-                        missionToUpdate.MissionVideoUrl = "";
-                        missionToUpdate.ModifiedDate = DateTime.UtcNow;
-                        missionToUpdate.RegistrationDeadLine = mission.EndDate.AddDays(-1);
-
+                        missionToUpdate.MissionDocuments = mission.MissionDocuments;
+                        missionToUpdate.MissionAvilability = mission.MissionAvilability;
+                        missionToUpdate.MissionVideoUrl = mission.MissionVideoUrl;
+                        missionToUpdate.ModifiedDate = DateTime.Now.ToUniversalTime();
 
                         _cIDbContext.SaveChanges();
 
@@ -134,9 +138,12 @@ namespace Data_Access_Layer
                     throw new Exception("Mission with the same title, city, start date, and end date already exists.");
                 }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                throw;
+                // Log the exception (you can use any logging framework or custom logging logic)
+                // For demonstration, we use Console.WriteLine. Replace this with your logging mechanism.
+                Console.WriteLine("An error occurred while updating the mission: " + ex.Message);
+                result = "An error occurred while updating the mission.";
             }
             return result;
         }
@@ -164,11 +171,10 @@ namespace Data_Access_Layer
                 throw;
             }
         }
-
         public List<Missions> ClientSideMissionList(int userid)
         {
             List<Missions> clientSideMissionList = new List<Missions>();
-            
+
             try
             {
                 clientSideMissionList = _cIDbContext.Missions
@@ -178,28 +184,28 @@ namespace Data_Access_Layer
                         Id = m.Id,
                         MissionTitle = m.MissionTitle,
                         MissionDescription = m.MissionDescription,
-                        MissionOrganisationDetail=m.MissionOrganisationDetail,
-                        MissionOrganisationName=m.MissionOrganisationName,
-                        CountryId= m.CountryId,
-                        CountryName=m.CountryName,
-                        CityId= m.CityId,
-                        CityName= m.CityName,
-                        StartDate= m.StartDate,
-                        EndDate= m.EndDate,
-                        MissionType= m.MissionType,
-                        TotalSheets= m.TotalSheets,
-                        RegistrationDeadLine= m.RegistrationDeadLine,
-                        MissionThemeId= m.MissionThemeId,
-                        MissionSkillId= m.MissionSkillId,
-                        MissionImages= m.MissionImages,
-                        MissionDocuments= m.MissionDocuments,
-                        MissionAvilability= m.MissionAvilability,
-                        MissionVideoUrl= m.MissionVideoUrl,
-                        MissionThemeName= m.MissionThemeName,
-                        MissionSkillName= string.Join(",",m.MissionSkillName),
-                        MissionStatus= m.RegistrationDeadLine < DateTime.Now.AddDays(-1) ? "Closed" : "Available",
+                        MissionOrganisationDetail = m.MissionOrganisationDetail,
+                        MissionOrganisationName = m.MissionOrganisationName,
+                        CountryId = m.CountryId,
+                        CountryName = m.CountryName,
+                        CityId = m.CityId,
+                        CityName = m.CityName,
+                        StartDate = m.StartDate,
+                        EndDate = m.EndDate,
+                        MissionType = m.MissionType,
+                        TotalSheets = m.TotalSheets,
+                        RegistrationDeadLine = m.RegistrationDeadLine,
+                        MissionThemeId = m.MissionThemeId,
+                        MissionSkillId = m.MissionSkillId,
+                        MissionImages = m.MissionImages,
+                        MissionDocuments = m.MissionDocuments,
+                        MissionAvilability = m.MissionAvilability,
+                        MissionVideoUrl = m.MissionVideoUrl,
+                        MissionThemeName = m.MissionThemeName,
+                        MissionSkillName = string.Join(",", m.MissionSkillName),
+                        MissionStatus = m.RegistrationDeadLine < DateTime.Now.AddDays(-1) ? "Closed" : "Available",
                         MissionApplyStatus = _cIDbContext.MissionApplication.Any(ma => ma.MissionId == m.Id && ma.UserId == userid) ? "Applied" : "Apply",
-                        MissionApproveStatus = _cIDbContext.MissionApplication.Any(ma => ma.MissionId == m.Id && ma.UserId == userid && ma.Status == true) ? "Approved" : "Rejected",
+                        MissionApproveStatus = _cIDbContext.MissionApplication.Any(ma => ma.MissionId == m.Id && ma.UserId == userid && ma.Status == true) ? "Approved" : "Applied",
                         MissionDateStatus = m.EndDate <= DateTime.Now.AddDays(-1) ? "MissionEnd" : "MissionRunning",
                         MissionDeadLineStatus = m.RegistrationDeadLine <= DateTime.Now.AddDays(-1) ? "Closed" : "Running",
                         MissionFavouriteStatus = "0",
@@ -214,6 +220,7 @@ namespace Data_Access_Layer
 
             return clientSideMissionList;
         }
+
         public List<Missions> MissionClientList(SortestData data)
         {
             List<Missions> missionClientList = new List<Missions>();
@@ -287,6 +294,7 @@ namespace Data_Access_Layer
             return missionClientList;
         }
 
+
         public string ApplyMission(MissionApplication missionApplication)
         {
             string result = "";
@@ -306,9 +314,11 @@ namespace Data_Access_Layer
                             // Check if sheets are available
                             if (mission.TotalSheets >= missionApplication.Sheet)
                             {
+                                int maID = _cIDbContext.MissionApplication.Max(u => u.Id) + 1;
                                 // Create a new MissionApplication entity
                                 var newApplication = new MissionApplication
                                 {
+                                    Id = maID,
                                     MissionId = missionApplication.MissionId,
                                     UserId = missionApplication.UserId,
                                     AppliedDate = missionApplication.AppliedDate,
@@ -357,7 +367,6 @@ namespace Data_Access_Layer
             }
             return result;
         }
-
         public List<MissionApplication> MissionApplicationList()
         {
             List<MissionApplication> missionApplicationList = new List<MissionApplication>();
@@ -433,7 +442,18 @@ namespace Data_Access_Layer
                 throw;
             }
         }
+        public Missions MissionDetailByMissionId(SortestData data)
+        {
+            Missions missionDetail = new Missions();
+            try
+            {
+
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+            return missionDetail;
+        }
     }
 }
-    
-
