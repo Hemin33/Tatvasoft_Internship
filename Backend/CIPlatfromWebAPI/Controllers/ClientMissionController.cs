@@ -1,4 +1,4 @@
-﻿using Business_logic_Layer;
+using Business_logic_Layer;
 using Data_Access_Layer.Repository.Entities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -42,17 +42,18 @@ namespace BackEnd.Controllers
         public ResponseResult MissionClientList(SortestData data)
         {
             try
-           {
-              result.Data = _balMission.MissionClientList(data);
-              result.Result = ResponseStatus.Success;
-           }
-           catch (Exception ex)
-           {
-              result.Result = ResponseStatus.Error;
-              result.Message = ex.Message;
-           }
-           return result;
+            {
+                result.Data = _balMission.MissionClientList(data);
+                result.Result = ResponseStatus.Success;
+            }
+            catch (Exception ex)
+            {
+                result.Result = ResponseStatus.Error;
+                result.Message = ex.Message;
+            }
+            return result;
         }
+
         [HttpPost]
         [Route("ApplyMission")]
         public ResponseResult ApplyMission(MissionApplication missionApplication)
@@ -74,15 +75,64 @@ namespace BackEnd.Controllers
         [Authorize]
         public ResponseResult MissionDetailByMissionId(SortestData data)
         {
-             try
-             {
-                 result.Data = _balMission.MissionDetailByMissionId(data);
-                 result.Result = ResponseStatus.Success;
-             }
+            try
+            {
+                result.Data = _balMission.MissionDetailByMissionId(data);
+                result.Result = ResponseStatus.Success;
+            }
             catch (Exception ex)
             {
-                 result.Result = ResponseStatus.Error;
-                 result.Message = ex.Message;
+                result.Result = ResponseStatus.Error;
+                result.Message = ex.Message;
+            }
+            return result;
+        }
+        [HttpPost]
+        [Route("AddMissionFavourite")]
+        public ResponseResult AddMissionFavourite(MissionFavourites missionFavourites)
+        {
+            try
+            {
+                result.Data = _balMission.AddMissionFavourite(missionFavourites);
+                result.Result = ResponseStatus.Success;
+            }
+            catch (Exception ex)
+            {
+                result.Result = ResponseStatus.Error;
+                result.Message = ex.Message;
+            }
+            return result;
+        }
+
+        [HttpPost]
+        [Route("RemoveMissionFavourite")]
+        public ResponseResult RemoveMissionFavourite(MissionFavourites missionFavourites)
+        {
+            try
+            {
+                result.Data = _balMission.RemoveMissionFavourite(missionFavourites);
+                result.Result = ResponseStatus.Success;
+            }
+            catch (Exception ex)
+            {
+                result.Result = ResponseStatus.Error;
+                result.Message = ex.Message;
+            }
+            return result;
+        }
+        [HttpPost]
+        [Route("SendInviteMissionMail")]
+        public ResponseResult SendInviteMissionMail(List<MissionShareOrInvite> user)
+        {
+            try
+            {
+                result.Data = _balMission.SendInviteMissionMail(user);
+                result.Result = ResponseStatus.Success;
+            }
+            catch (Exception ex)
+            {
+                result.Result = ResponseStatus.Error;
+                result.Message = ex.Message;
             }
             return result;
         }
