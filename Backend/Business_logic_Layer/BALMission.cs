@@ -1,11 +1,12 @@
-﻿using Data_Access_Layer;
+
+using Data_Access_Layer;
 using Data_Access_Layer.Repository.Entities;
 
 namespace Business_logic_Layer
 {
     public class BALMission
     {
-        private readonly DALMission _dalMission;     
+        private readonly DALMission _dalMission;
         public BALMission(DALMission dalMission)
         {
             _dalMission = dalMission;
@@ -22,10 +23,10 @@ namespace Business_logic_Layer
         {
             return _dalMission.MissionList();
         }
-        public string AddMission(Missions  mission)
+        public string AddMission(Missions mission)
         {
             return _dalMission.AddMission(mission);
-        }       
+        }
         public Missions MissionDetailById(int id)
         {
             return _dalMission.MissionDetailById(id);
@@ -38,7 +39,6 @@ namespace Business_logic_Layer
         {
             return _dalMission.DeleteMission(id);
         }
-
         public string ApplyMission(MissionApplication missionApplication)
         {
             return _dalMission.ApplyMission(missionApplication);
@@ -48,11 +48,10 @@ namespace Business_logic_Layer
         {
             return _dalMission.ClientSideMissionList(userid);
         }
-         public List<Missions> MissionClientList(SortestData data)
+        public List<Missions> MissionClientList(SortestData data)
         {
             return _dalMission.MissionClientList(data);
         }
-
         public List<MissionApplication> MissionApplicationList()
         {
             return _dalMission.MissionApplicationList();
@@ -68,7 +67,7 @@ namespace Business_logic_Layer
         }
         public Missions MissionDetailByMissionId(SortestData data)
         {
-           return _dalMission.MissionDetailByMissionId(data);
+            return _dalMission.MissionDetailByMissionId(data);
         }
         public string AddMissionFavourite(MissionFavourites missionFavourites)
         {
@@ -76,12 +75,19 @@ namespace Business_logic_Layer
         }
         public string RemoveMissionFavourite(MissionFavourites missionFavourites)
         {
-           return _dalMission.RemoveMissionFavourite(missionFavourites);
+            return _dalMission.RemoveMissionFavourite(missionFavourites);
         }
         public string SendInviteMissionMail(List<MissionShareOrInvite> user)
         {
-           return _dalMission.SendInviteMissionMail(user);
+            return _dalMission.SendInviteMissionMail(user);
+        }
+        public string AddMissionComment(MissionComment missionComment)
+        {
+            return _dalMission.AddMissionComment(missionComment);
+        }
+        public List<MissionComment> MissionCommentListByMissionId(int missionId)
+        {
+            return _dalMission.MissionCommentListByMissionId(missionId);
         }
     }
 }
-
