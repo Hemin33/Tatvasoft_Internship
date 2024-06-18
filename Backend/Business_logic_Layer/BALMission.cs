@@ -1,5 +1,6 @@
 
-using Data_Access_Layer;
+﻿using Data_Access_Layer;
+using Data_Access_Layer.Common;
 using Data_Access_Layer.Repository.Entities;
 
 namespace Business_logic_Layer
@@ -20,7 +21,7 @@ namespace Business_logic_Layer
             return _dalMission.GetMissionSkillList();
         }
         public List<Missions> MissionList()
-        {
+        {   
             return _dalMission.MissionList();
         }
         public string AddMission(Missions mission)
@@ -67,6 +68,7 @@ namespace Business_logic_Layer
         }
         public Missions MissionDetailByMissionId(SortestData data)
         {
+            Console.WriteLine("2");
             return _dalMission.MissionDetailByMissionId(data);
         }
         public string AddMissionFavourite(MissionFavourites missionFavourites)
