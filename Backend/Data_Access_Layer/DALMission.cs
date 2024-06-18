@@ -19,14 +19,14 @@ namespace Data_Access_Layer
         }
         public List<DropDown> GetMissionThemeList()
         {
-            return _cIDbContext.MissionTheme
+            return _cIDbContext.MissionTheme.Where(mt => mt.IsDeleted == false)
                 .Select(mt => new DropDown { Value = mt.Id, Text = mt.ThemeName })
                 .ToList();
         }
 
         public List<DropDown> GetMissionSkillList()
         {
-            return _cIDbContext.MissionSkill
+            return _cIDbContext.MissionSkill.Where(ms => ms.IsDeleted == false)
                 .Select(ms => new DropDown { Value = ms.Id, Text = ms.SkillName })
                 .ToList();
         }
@@ -34,7 +34,7 @@ namespace Data_Access_Layer
         public List<Missions> MissionList()
         {
             return _cIDbContext.Missions
-                .Where(mt => !mt.IsDeleted)
+                .Where(ml => !ml.IsDeleted == false)
                 .ToList();
         }
 
