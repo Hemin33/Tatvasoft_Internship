@@ -1,6 +1,4 @@
-
-﻿using Data_Access_Layer;
-using Data_Access_Layer.Common;
+using Data_Access_Layer;
 using Data_Access_Layer.Repository.Entities;
 
 namespace Business_logic_Layer
@@ -21,7 +19,7 @@ namespace Business_logic_Layer
             return _dalMission.GetMissionSkillList();
         }
         public List<Missions> MissionList()
-        {   
+        {
             return _dalMission.MissionList();
         }
         public string AddMission(Missions mission)
