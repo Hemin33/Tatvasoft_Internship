@@ -34,7 +34,7 @@ namespace Data_Access_Layer
         public List<Missions> MissionList()
         {
             return _cIDbContext.Missions
-                .Where(ml => !ml.IsDeleted == false)
+                .Where(ml => !ml.IsDeleted == false )
                 .ToList();
         }
 
@@ -446,12 +446,12 @@ namespace Data_Access_Layer
         {
             try
             {
+                Console.WriteLine("1");
                 var missionDetail = _cIDbContext.Missions
                     .FirstOrDefault(m => m.Id == data.MissionId);
 
                 if (missionDetail != null)
                 {
-                    // Ensure additional mappings and logic are correctly applied
                     missionDetail.MissionSkillName = string.Join(",", missionDetail.MissionSkillName);
                     missionDetail.MissionStatus = missionDetail.RegistrationDeadLine < DateTime.Now.AddDays(-1) ? "Closed" : "Available";
                     missionDetail.MissionApplyStatus = _cIDbContext.MissionApplication
