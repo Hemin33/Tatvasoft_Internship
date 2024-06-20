@@ -1,11 +1,14 @@
+
+﻿using Data_Access_Layer.Common;
 using Data_Access_Layer.Migrations;
 using Data_Access_Layer.Repository;
 using Data_Access_Layer.Repository.Entities;
 using Microsoft.EntityFrameworkCore;
 using System.Data;
+using System.Linq.Dynamic.Core;
 using System.Net;
 using System.Net.Mail;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
+using MimeKit;
 
 namespace Data_Access_Layer
 {
@@ -19,14 +22,14 @@ namespace Data_Access_Layer
         }
         public List<DropDown> GetMissionThemeList()
         {
-            return _cIDbContext.MissionTheme.Where(mt => mt.IsDeleted == false)
+            return _cIDbContext.MissionTheme
                 .Select(mt => new DropDown { Value = mt.Id, Text = mt.ThemeName })
                 .ToList();
         }
 
         public List<DropDown> GetMissionSkillList()
         {
-            return _cIDbContext.MissionSkill.Where(ms => ms.IsDeleted == false)
+            return _cIDbContext.MissionSkill
                 .Select(ms => new DropDown { Value = ms.Id, Text = ms.SkillName })
                 .ToList();
         }
@@ -34,7 +37,7 @@ namespace Data_Access_Layer
         public List<Missions> MissionList()
         {
             return _cIDbContext.Missions
-                .Where(ml => !ml.IsDeleted == false )
+                .Where(mt => !mt.IsDeleted)
                 .ToList();
         }
 
